@@ -1,0 +1,15 @@
+SELECT 
+event_date,
+restraunt_id, 
+app_version,
+device_version,
+auth_check,
+countif(event_name = 'action_order_start') as order_start_count,
+countif(event_name = 'action_order_success') as order_success_count,
+sum(order_value) as revenue,
+avg(product_count) as avg_products
+FROM `kfc-kiosk-3.analytics_342207469.only_auth_kiosk_data` 
+Where status = 'online_checks'
+group by event_date, restraunt_id, app_version, device_version, auth_check
+Order by event_date, restraunt_id, app_version, device_version, auth_check
+LIMIT 1000
