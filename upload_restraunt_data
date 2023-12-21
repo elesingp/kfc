@@ -1,0 +1,22 @@
+INSERT INTO kfc-kiosk-3.analytics_342207469.only_auth_kiosk_data 
+SELECT 
+  event_date,
+  (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'infoStoreId') AS restraunt_id, 
+  CASE 
+  WHEN (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'infoStoreId') IN ('74013270', '74321666') THEN 'have_paper_checks'
+  WHEN (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'infoStoreId') IN ('74012184', '74020851', '74020896') THEN 'have_printers'
+  ELSE 'online_checks'
+  END AS status,
+  (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'order_date') AS date, 
+  (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'app_version') AS app_version, 
+  (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'infoDeviceName') AS device_version, 
+  (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'infoDeviceID') AS device_id, 
+  event_name, 
+  (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'authenticated_user') AS auth_check, 
+  (SELECT CAST(value.string_value AS INTEGER)/100 FROM UNNEST(event_params) WHERE key = 'order_value') AS order_value, 
+  (SELECT CAST(value.string_value AS INTEGER) FROM UNNEST(event_params) WHERE key = 'productsQuantity') AS product_count 
+FROM  
+  kfc-kiosk-3.analytics_342207469.events_20231217
+WHERE   
+  event_name IN ('action_order_start', 'action_order_success') AND  
+  (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'infoStoreId') IN ('74020587', '74013270', '74020449', '74021433', '74021788', '74021978', '74020896', '74012184', '74020851', '74020828', '74021003', '74021914', '74021880', '74021975', '74321670', '74321666', '74215106', '74021329', '74021678', '74020871', '74020660', '74021302', '74021639');
